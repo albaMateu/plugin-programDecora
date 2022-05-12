@@ -1,0 +1,21 @@
+img#dona {
+    width: 90px;
+    transform: rotate(-20deg);
+}
+
+/*  mobils  */
+@media screen and (max-width: 768px) {
+    img#dona {
+        width: 45px;
+        transform: rotate(-20deg);
+        position: absolute;
+        top: 0px;
+    }
+}
+
+/* cabecera es fa menuda menos en tablets i mobils */
+@media (min-width: 992px) {
+    img#dona.resize {
+        transform: scale(0.7) rotate(-20deg);
+    }
+}
