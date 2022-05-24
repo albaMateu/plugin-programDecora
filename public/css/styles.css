@@ -3,6 +3,17 @@ img#dona {
     transform: rotate(-20deg);
 }
 
+.wave {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-color: #d6d2e7 !important;
+}
+
+.wave nav #primary-menu li a:hover,
+.wave nav #primary-menu li.current-menu-item>a {
+    color: #fff !important;
+}
+
 /*  mobils  */
 @media screen and (max-width: 768px) {
     img#dona {
@@ -10,6 +21,11 @@ img#dona {
         transform: rotate(-20deg);
         position: absolute;
         top: 0px;
+    }
+
+    .wave nav #primary-menu li a:hover,
+    .wave nav #primary-menu li.current-menu-item>a {
+        color: #888 !important;
     }
 }
 
