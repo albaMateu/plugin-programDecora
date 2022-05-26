@@ -7,10 +7,34 @@ var pos = curWwwPath.indexOf(pathName);
 /* directorio raíz plugin */
 var PROGDECO_RUTA =
   curWwwPath.substring(0, pos) + "/wp-content/plugins/program-decora";
+
+var today = createDate();
 /* fall */
+var fall_active = false;
+var station;
 var fallObjects = new Array();
-newObject(PROGDECO_RUTA + "/public/img/8mar.svg", 30, 30);
-newObject(PROGDECO_RUTA + "/public/img/8mar.svg", 30, 30);
+if (today === createDate("03/20")) {
+  //comienza primavera
+  station = "primavera";
+  fall_active = true;
+} else if (today === createDate("06/21")) {
+  //comienza verano
+  station = "estiu";
+  fall_active = true;
+} else if (today === createDate("09/23")) {
+  //comienza otonyo
+  station = "tardor";
+  fall_active = true;
+} else if (today === createDate("12/21")) {
+  //comienza invierno
+  station = "hivern";
+  fall_active = true;
+}
+
+newObject(PROGDECO_RUTA + "/public/img/" + station + "-1.svg", 30, 30);
+newObject(PROGDECO_RUTA + "/public/img/" + station + "-2.svg", 30, 30);
+newObject(PROGDECO_RUTA + "/public/img/" + station + "-3.svg", 30, 30);
+newObject(PROGDECO_RUTA + "/public/img/" + station + "-4.svg", 30, 30);
 var numObjs = 20,
   waft = 50,
   fallSpeed = 10,
@@ -23,33 +47,34 @@ var objects = new Array(),
   moz = document.getElementById ? 1 : 0;
 
 window.onload = function () {
-  var today = createDate();
   var det_data = createDate("03/08");
   if (today === det_data) {
     changeColorHeader();
     changeColorFooter();
     addImg();
   }
-  /* Comprobando el ancho de la ventana y si es menor a 991px, establecerá el viento en 0 y el
-número de objetos entre 5 y 15. Si la ventana es mayor a 991px, establecerá el
-viento a un número aleatorio entre -2 y 2 y el número de objetos a caer entre 15 y 25. */
-  if (window.innerWidth <= 991) {
-    /* dirección recto */
-    wind = 0;
-    /* numero aleatorio de objetos a caer entre 5 y 15 */
-    numObjs = getRndInteger(5, 10);
-  } else {
-    /* direccion aleatoria */
-    wind = getRndInteger(-2, 2);
-    /* numero aleatorio de objetos a caer entre 15 y 25 */
-    numObjs = getRndInteger(15, 25);
+  if (fall) {
+    /* Comprobando el ancho de la ventana y si es menor a 991px, establecerá el viento en 0 y el
+        número de objetos entre 5 y 15. Si la ventana es mayor a 991px, establecerá el
+        viento a un número aleatorio entre -2 y 2 y el número de objetos a caer entre 15 y 25. */
+    if (window.innerWidth <= 991) {
+      /* dirección recto */
+      wind = 0;
+      /* numero aleatorio de objetos a caer entre 5 y 15 */
+      numObjs = getRndInteger(5, 10);
+    } else {
+      /* direccion aleatoria */
+      wind = getRndInteger(-2, 2);
+      /* numero aleatorio de objetos a caer entre 15 y 25 */
+      numObjs = getRndInteger(15, 25);
+    }
+    winSize();
+    for (i = 0; i < numObjs; i++) {
+      fallObject(i, parseInt(Math.random() * fallObjects.length), 1);
+    }
+    window.onresize = winSize;
+    fall();
   }
-  winSize();
-  for (i = 0; i < numObjs; i++) {
-    fallObject(i, parseInt(Math.random() * fallObjects.length), 1);
-  }
-  window.onresize = winSize;
-  fall();
 };
 /* ****** FUNCION FALL ******* */
 
