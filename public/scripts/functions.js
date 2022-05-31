@@ -8,33 +8,39 @@ var pos = curWwwPath.indexOf(pathName);
 var PROGDECO_RUTA =
   curWwwPath.substring(0, pos) + "/wp-content/plugins/program-decora";
 
-var today = createDate();
+var today = createDateString();
+var ano = new Date().getFullYear();
+
+if (
+  new Date().getTime() > new Date(ano + "/12/21").getTime() &&
+  new Date().getTime() < new Date(ano + 1 + "/01/07").getTime()
+) {
+  console.log("ya es navidad YUPI");
+}
+
 /* fall */
 var fall_active = false;
 var station;
 var fallObjects = new Array();
-if (today === createDate("03/20")) {
+/* activa decoración estación del año */
+if (today === createDateString("03/20")) {
   //comienza primavera
   station = "primavera";
   fall_active = true;
-} else if (today === createDate("06/21")) {
+} else if (today === createDateString("06/21")) {
   //comienza verano
   station = "estiu";
   fall_active = true;
-} else if (today === createDate("09/23")) {
+} else if (today === createDateString("09/23")) {
   //comienza otonyo
   station = "tardor";
   fall_active = true;
-} else if (today === createDate("12/21")) {
+} else if (today === createDateString("12/21")) {
   //comienza invierno
   station = "hivern";
   fall_active = true;
 }
 
-newObject(PROGDECO_RUTA + "/public/img/" + station + "-1.svg", 30, 30);
-newObject(PROGDECO_RUTA + "/public/img/" + station + "-2.svg", 30, 30);
-newObject(PROGDECO_RUTA + "/public/img/" + station + "-3.svg", 30, 30);
-newObject(PROGDECO_RUTA + "/public/img/" + station + "-4.svg", 30, 30);
 var numObjs = 20,
   waft = 50,
   fallSpeed = 10,
@@ -47,13 +53,17 @@ var objects = new Array(),
   moz = document.getElementById ? 1 : 0;
 
 window.onload = function () {
-  var det_data = createDate("03/08");
-  if (today === det_data) {
+  /* activa decoración dia de la dona */
+  if (today === createDateString("03/08")) {
     changeColorHeader();
     changeColorFooter();
-    addImg();
+    addImg("8mar.svg", "Simbolo dia de la mujer");
   }
-  if (fall) {
+  if (fall_active) {
+    newObject(PROGDECO_RUTA + "/public/img/" + station + "-1.svg", 30, 30);
+    newObject(PROGDECO_RUTA + "/public/img/" + station + "-2.svg", 30, 30);
+    newObject(PROGDECO_RUTA + "/public/img/" + station + "-3.svg", 30, 30);
+    newObject(PROGDECO_RUTA + "/public/img/" + station + "-4.svg", 30, 30);
     /* Comprobando el ancho de la ventana y si es menor a 991px, establecerá el viento en 0 y el
         número de objetos entre 5 y 15. Si la ventana es mayor a 991px, establecerá el
         viento a un número aleatorio entre -2 y 2 y el número de objetos a caer entre 15 y 25. */
@@ -75,7 +85,27 @@ window.onload = function () {
     window.onresize = winSize;
     fall();
   }
+  /* Fa menut i gran la imatge insertada al header al fer scroll */
+  window.onscroll = function () {
+    //si existeix el DOM de la img nova (si hem insertat imatge)
+    if (!!document.getElementById("img_new")) {
+      // obtener la posición actual (eje Y)
+      let scroll_actual = window.pageYOffset;
+      //scroll que hem fet al header
+      let header = document.getElementsByTagName("header")[0];
+      let header_scroll = header.offsetTop;
+
+      var img_new = document.getElementById("img_new");
+
+      if (scroll_actual > header_scroll - 40) {
+        img_new.classList.add("resize");
+      } else {
+        img_new.classList.remove("resize");
+      }
+    }
+  };
 };
+
 /* ****** FUNCION FALL ******* */
 
 /* numero random entre un minimo y un maximo */
@@ -86,14 +116,11 @@ function getRndInteger(min, max) {
 function newObject(url, height, width) {
   fallObjects[fallObjects.length] = new Array(url, height, width);
 }
-/**
- * Si el navegador es Mozilla, entonces el ancho de la ventana es el ancho interior, de lo contrario, el ancho de la ventana es
- * el ancho del cliente.
- */
+
 function winSize() {
-  /* si es mozilla innerWidth y si no, clientWidth */
-  winWidth = moz ? window.innerWidth - 180 : document.body.clientWidth - 180;
-  winHeight = moz ? window.innerHeight + 500 : document.body.clientHeight + 500;
+  /* mida body */
+  winWidth = document.body.scrollWidth;
+  winHeight = document.body.scrollHeight;
 }
 
 /**
@@ -149,6 +176,7 @@ function fall() {
       left = objects[i][0] + objects[i][2] * Math.cos(objects[i][4]) + "px";
     }
   }
+  //rapidez en caer
   setTimeout("fall()", 31);
 }
 
@@ -159,39 +187,34 @@ function fall() {
  * @param [fecha=null] - La fecha que desea formatear.
  * @returns Una cadena con la fecha en el formato "dd/mm"
  */
-function createDate(fecha = null) {
+function createDateString(fecha = null) {
   let date;
   if (fecha == null) {
     date = new Date();
   } else {
     date = new Date(fecha);
   }
-  return date.toLocaleDateString("es-ES", {
-    month: "numeric",
-    day: "numeric",
-  });
+  return date.toLocaleDateString("es-ES", { month: "numeric", day: "numeric" });
+}
+/* ******** FUNCIÓN INSERTAR IMAGEN ********** */
+/**
+ * Crea un elemento de imagen, establece sus atributos src, alt, id y class, y luego lo agrega al
+ * header al lado del nombre de la empresa
+ * @param name: el nombre de la imagen que desea agregar.
+ * @param alt: el atributo alt se usa para especificar un texto alternativo para una imagen, si la imagen
+ * no se puede mostrar.
+ * */
+function addImg(name, alt) {
+  let title = document.querySelector(".site-branding");
+  let img = document.createElement("img");
+  img.src = PROGDECO_RUTA + "/public/img/" + name;
+  img.alt = alt;
+  img.id = "img_new";
+  img.class = "";
+  title.appendChild(img);
 }
 
 /* *********** FUNCIONES 8 MARZO ************************ */
-/* Fa menut i gran la imatge del dia de la dona al ser scroll */
-window.onscroll = function () {
-  //si existeix el DOM de la img dona
-  if (!!document.getElementById("dona")) {
-    // obtener la posición actual (eje Y)
-    let scroll_actual = window.pageYOffset;
-    //scroll que hem fet al header
-    let header = document.getElementsByTagName("header")[0];
-    let header_scroll = header.offsetTop;
-
-    var img_dona = document.getElementById("dona");
-
-    if (scroll_actual > header_scroll - 40) {
-      img_dona.classList.add("resize");
-    } else {
-      img_dona.classList.remove("resize");
-    }
-  }
-};
 
 /* cambia de color el footer  */
 function changeColorFooter() {
@@ -209,15 +232,4 @@ function changeColorHeader() {
     "url(" + PROGDECO_RUTA + "/public/img/wave_header.svg)";
   header.style.backgroundPositionY = "bottom";
   header.classList.add("wave");
-}
-
-/* insertar imatge dia de la dona */
-function addImg() {
-  let title = document.querySelector(".site-branding");
-  let img = document.createElement("img");
-  img.src = PROGDECO_RUTA + "/public/img/8mar.svg";
-  img.alt = "simbolo dia de la mujer";
-  img.id = "dona";
-  img.class = "";
-  title.appendChild(img);
 }
